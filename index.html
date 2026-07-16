@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tibia Decorator - Protótipo</title>
+    <title>Tibia Homestyler - Simulador</title>
     <style>
         body {
-            background-color: #1a1a1a;
+            background-color: #0c0c0c;
             color: #fff;
             font-family: Arial, sans-serif;
             display: flex;
@@ -17,34 +17,64 @@
 
         h1 {
             color: #f3b137;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: #ccc;
+            margin-bottom: 25px;
         }
 
         /* Container principal */
         .editor-container {
             display: flex;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 30px;
+            background-color: #161616;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         /* Menu de Itens (Paleta) */
         .palette {
-            background-color: #2b2b2b;
+            background-color: #222;
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid #555;
+            border: 2px solid #444;
+            width: 160px;
         }
 
+        .palette h3 {
+            margin-top: 0;
+            color: #f3b137;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            text-align: center;
+        }
+
+        /* Botão do Menu de Itens */
         .item-btn {
-            display: block;
-            width: 120px;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: #333;
             color: white;
-            border: 1px solid #666;
+            border: 1px solid #555;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .item-btn img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated; /* Mantém o estilo retro pixelado sem borrar */
         }
 
         .item-btn.selected {
@@ -56,80 +86,115 @@
         /* O Grid da Casa (Sala 4x4) */
         .house-grid {
             display: grid;
-            grid-template-columns: repeat(4, 80px);
-            grid-template-rows: repeat(4, 80px);
-            gap: 2px;
-            background-color: #444;
-            padding: 5px;
+            grid-template-columns: repeat(4, 64px);
+            grid-template-rows: repeat(4, 64px);
+            gap: 1px;
+            background-color: #000;
+            padding: 4px;
             border: 3px solid #f3b137;
+            box-shadow: inset 0 0 10px #000;
         }
 
         /* Cada quadrado (tile) do chão */
         .tile {
-            background-color: #5c5c5c; /* Cor de chão de pedra */
-            border: 1px solid #666;
+            /* Piso de Pedra Clássico do Tibia (Grey Stone Tile) puxado do TibiaWiki */
+            background-image: url('https://static.tibiawiki.com.br/images/8/87/Grey_Stone_Tile.gif');
+            background-size: cover;
+            image-rendering: pixelated;
             display: flex;
             align-items: center;
-            justify-center: center;
-            font-size: 12px;
+            justify-content: center;
             cursor: pointer;
-            user-select: none;
-            transition: background 0.2s;
+            position: relative;
+            transition: filter 0.1s;
         }
 
         .tile:hover {
-            background-color: #777;
+            filter: brightness(1.2);
+        }
+
+        /* Imagem do item colocado dentro do tile */
+        .tile img {
+            width: 48px;  /* Um pouco maior que 32px para melhor visibilidade no grid de 64px */
+            height: 48px;
+            image-rendering: pixelated;
+            position: absolute;
+            pointer-events: none; /* Evita que o clique pegue na imagem ao invés do tile */
         }
     </style>
 </head>
 <body>
 
-    <h1>Meu Simulador de Tibia</h1>
-    <p>Selecione um item à esquerda e clique em um quadrado do mapa para decorar!</p>
+    <h1>Tibia Homestyler</h1>
+    <p>Selecione um item no menu e clique no chão de pedra para começar sua decoração!</p>
 
     <div class="editor-container">
         <!-- Paleta de Itens -->
         <div class="palette">
             <h3>Itens</h3>
-            <button class="item-btn selected" onclick="selectItem('Blood Herb', this)">Blood Herb 🌿</button>
-            <button class="item-btn" onclick="selectItem('Box', this)">Crate/Box 📦</button>
-            <button class="item-btn" onclick="selectItem('Trophy', this)">Demon Trophy 😈</button>
-            <button class="item-btn" onclick="selectItem('Vazio', this)">Remover ❌</button>
+            
+            <button class="item-btn selected" onclick="selectItem('Blood_Herb', 'https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif', this)">
+                <img src="https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif" alt="Blood Herb">
+                <span>Blood Herb</span>
+            </button>
+            
+            <button class="item-btn" onclick="selectItem('Cuckoo_Clock', 'https://static.tibiawiki.com.br/images/a/a2/Cuckoo_Clock.gif', this)">
+                <img src="https://static.tibiawiki.com.br/images/a/a2/Cuckoo_Clock.gif" alt="Cuckoo Clock">
+                <span>Clock</span>
+            </button>
+            
+            <button class="item-btn" onclick="selectItem('Demon_Trophy', 'https://static.tibiawiki.com.br/images/b/b3/Demon_Trophy.gif', this)">
+                <img src="https://static.tibiawiki.com.br/images/b/b3/Demon_Trophy.gif" alt="Demon Trophy">
+                <span>Trophy</span>
+            </button>
+
+            <button class="item-btn" onclick="selectItem('Box', 'https://static.tibiawiki.com.br/images/d/df/Box.gif', this)">
+                <img src="https://static.tibiawiki.com.br/images/d/df/Box.gif" alt="Box">
+                <span>Box</span>
+            </button>
+            
+            <button class="item-btn" onclick="selectItem('Vazio', '', this)">
+                <span style="font-size: 24px; margin-left: 5px; width: 32px;">❌</span>
+                <span>Remover</span>
+            </button>
         </div>
 
         <!-- Grid da Casa -->
         <div class="house-grid" id="grid">
-            <!-- Os quadrados (tiles) serão gerados aqui pelo JavaScript -->
+            <!-- Os tiles serão gerados pelo JS -->
         </div>
     </div>
 
     <script>
-        // Item atualmente selecionado para colocar no chão
-        let selectedItem = 'Blood Herb';
+        // Guardamos o nome do item e a URL da imagem selecionada
+        let selectedItemName = 'Blood_Herb';
+        let selectedItemImg = 'https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif';
 
-        // Função para mudar o item selecionado no menu lateral
-        function selectItem(itemName, buttonElement) {
-            selectedItem = itemName;
+        function selectItem(name, imgSrc, buttonElement) {
+            selectedItemName = name;
+            selectedItemImg = imgSrc;
             
-            // Remove a classe 'selected' de todos os botões e adiciona no atual
+            // Controle visual de seleção dos botões
             document.querySelectorAll('.item-btn').forEach(btn => btn.classList.remove('selected'));
             buttonElement.classList.add('selected');
         }
 
-        // Gerar o Grid 4x4 dinamicamente
+        // Gerar o Grid 4x4
         const gridContainer = document.getElementById('grid');
         for (let i = 0; i < 16; i++) {
             const tile = document.createElement('div');
             tile.classList.add('tile');
             
-            // Evento de clique para colocar ou remover o item no quadrado
             tile.addEventListener('click', () => {
-                if (selectedItem === 'Vazio') {
-                    tile.innerText = '';
-                    tile.style.backgroundColor = '#5c5c5c'; // Cor padrão do chão
-                } else {
-                    tile.innerText = selectedItem;
-                    tile.style.backgroundColor = '#3d4d3d'; // Cor amigável para destacar que tem item
+                // Remove qualquer imagem que já esteja no tile
+                tile.innerHTML = '';
+
+                if (selectedItemName !== 'Vazio') {
+                    // Cria uma nova tag de imagem para o item
+                    const img = document.createElement('img');
+                    img.src = selectedItemImg;
+                    img.alt = selectedItemName;
+                    tile.appendChild(img);
                 }
             });
 
