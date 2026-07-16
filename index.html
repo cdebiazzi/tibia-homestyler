@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tibia Homestyler - Simulador</title>
+    <title>Tibia Homestyler - Wood Avenue 6a</title>
     <style>
         body {
             background-color: #0c0c0c;
@@ -26,7 +26,6 @@
             margin-bottom: 25px;
         }
 
-        /* Container principal */
         .editor-container {
             display: flex;
             gap: 30px;
@@ -38,7 +37,6 @@
             align-items: flex-start;
         }
 
-        /* Menu de Itens (Paleta) */
         .palette {
             background-color: #222;
             padding: 15px;
@@ -55,7 +53,6 @@
             text-align: center;
         }
 
-        /* Botão do Menu de Itens */
         .item-btn {
             display: flex;
             align-items: center;
@@ -84,7 +81,6 @@
             border-color: #fff;
         }
 
-        /* Botão de Ação Especial (Limpar) */
         .action-btn {
             background-color: #8b0000;
             color: white;
@@ -96,7 +92,6 @@
             background-color: #b22222;
         }
 
-        /* Área da Casa */
         .house-area {
             display: flex;
             flex-direction: column;
@@ -112,48 +107,70 @@
             letter-spacing: 1px;
         }
 
-        /* O Grid da Casa (Casa Quadrada de 25 sqm: 5x5) */
-        /* Ajustado de forma compacta para alinhar as texturas milimetricamente */
+        /* Grid exato da Wood Avenue 6a: 6x5 */
         .house-grid {
             display: grid;
-            grid-template-columns: repeat(10, 32px);
-            grid-template-rows: repeat(8, 32px);
+            grid-template-columns: repeat(6, 32px);
+            grid-template-rows: repeat(5, 32px);
             gap: 0px; 
-            background-color: #000;
+            background-color: #111;
             padding: 0px;
-            border: 4px solid #4a3b2c; /* Borda cor de madeira/parede antiga */
+            border: 4px solid #111;
             box-shadow: 0 10px 25px rgba(0,0,0,0.8);
         }
 
-        /* Cada quadrado (tile) do chão */
+        /* Estilo base de cada quadrado (Tile) */
         .tile {
             width: 32px;
             height: 32px;
-            background-image: url('images/Wooden_Tile.gif');
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
+            box-sizing: border-box;
             image-rendering: pixelated;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             position: relative;
         }
 
-        /* Efeito sutil ao passar o mouse para saber onde está clicando */
-        .tile:hover::after {
+        /* 0: Chão de Madeira Decorável */
+        .tile.floor {
+            background-color: #3e2718; 
+            background-image: url('images/Wooden_Tile.gif');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        /* 1: Parede de Pedra Branca de Edron */
+        .tile.wall {
+            background-color: #d1cbd4; /* Cor reserva de mármore claro */
+            background-image: url('images/Edron_Wall.gif'); 
+            background-size: 100% 100%;
+            cursor: not-allowed;
+        }
+
+        /* 2: Porta de Entrada de Edron */
+        .tile.door {
+            background-color: #5c4033;
+            background-image: url('images/Edron_Door.gif');
+            background-size: 100% 100%;
+            cursor: not-allowed;
+        }
+
+        /* Efeito de hover nos pisos válidos */
+        .tile.floor:hover::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            border: 1px solid rgba(243, 177, 55, 0.5);
+            border: 1px solid rgba(243, 177, 55, 0.6);
             pointer-events: none;
+            z-index: 10;
         }
 
-        /* Imagem do item colocado dentro do tile */
-        .tile img {
+        /* Imagem do item decorativo colocado */
+        .tile img.item {
             width: 32px;
             height: 32px;
             image-rendering: pixelated;
@@ -161,16 +178,17 @@
             pointer-events: none;
             bottom: 0;
             right: 0;
+            z-index: 5;
         }
     </style>
 </head>
 <body>
 
     <h1>Tibia Homestyler</h1>
-    <p>Selecione um item no menu e monte a decoração da sua casa!</p>
+    <p>Simulador de Decoração - Edron Edition</p>
 
     <div class="editor-container">
-        <!-- Paleta de Itens -->
+        <!-- Menu Lateral -->
         <div class="palette">
             <h3>Itens</h3>
             
@@ -199,18 +217,17 @@
                 <span>Remover</span>
             </button>
 
-            <!-- Botão de Limpar Tudo -->
             <button class="item-btn action-btn" onclick="clearHouse()">
                 <span style="font-size: 20px; margin-left: 5px; width: 32px;">🧹</span>
                 <span>Limpar Casa</span>
             </button>
         </div>
 
-        <!-- Área da Casa (Centralizada e bem apresentada) -->
+        <!-- Área da Casa -->
         <div class="house-area">
-            <div class="house-title">Sua Casa</div>
+            <div class="house-title">Wood Avenue 6a (Edron - 30 SQM)</div>
             <div class="house-grid" id="grid">
-                <!-- Os tiles serão gerados pelo JS -->
+                <!-- Gerado dinamicamente via JS -->
             </div>
         </div>
     </div>
@@ -222,38 +239,67 @@
         function selectItem(name, imgSrc, buttonElement) {
             selectedItemName = name;
             selectedItemImg = imgSrc;
-            
             document.querySelectorAll('.item-btn').forEach(btn => btn.classList.remove('selected'));
             buttonElement.classList.add('selected');
         }
 
-        // Gerar o Grid 5x5 (25 SQM)
+        /* 
+           MAPA REAL DA WOOD AVENUE 6a (6x5):
+           1 = Parede de Edron
+           0 = Chão de Madeira Decorável
+           2 = Porta de Entrada (Fica embaixo, na direita)
+           
+           Nota: A parede no meio (coluna índice 3) cria a divisão 
+           do quarto privativo na esquerda e da sala na direita.
+        */
+        const houseMap = [
+            [1, 1, 1, 1, 1, 1], // Parede de trás
+            [1, 0, 0, 1, 0, 1], // Quarto esquerdo | Divisória | Sala direita
+            [1, 0, 0, 0, 0, 1], // Passagem livre entre os dois cômodos
+            [1, 0, 0, 1, 0, 1], // Quarto esquerdo | Divisória | Sala direita
+            [1, 1, 1, 1, 2, 1]  // Parede da frente com a porta de Edron
+        ];
+
         const gridContainer = document.getElementById('grid');
-        const totalTiles = 70; // 
 
-        for (let i = 0; i < totalTiles; i++) {
-            const tile = document.createElement('div');
-            tile.classList.add('tile');
-            
-            tile.addEventListener('click', () => {
-                tile.innerHTML = '';
+        for (let row = 0; row < houseMap.length; row++) {
+            for (let col = 0; col < houseMap[row].length; col++) {
+                const tileType = houseMap[row][col];
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
 
-                if (selectedItemName !== 'Vazio') {
-                    const img = document.createElement('img');
-                    img.src = selectedItemImg;
-                    img.alt = selectedItemName;
-                    tile.appendChild(img);
+                if (tileType === 1) {
+                    tile.classList.add('wall');
+                } else if (tileType === 2) {
+                    tile.classList.add('door');
+                } else {
+                    tile.classList.add('floor');
+
+                    tile.addEventListener('click', () => {
+                        const existingImg = tile.querySelector('.item');
+                        if (existingImg) {
+                            existingImg.remove();
+                        }
+
+                        if (selectedItemName !== 'Vazio') {
+                            const img = document.createElement('img');
+                            img.src = selectedItemImg;
+                            img.alt = selectedItemName;
+                            img.classList.add('item');
+                            tile.appendChild(img);
+                        }
+                    });
                 }
-            });
 
-            gridContainer.appendChild(tile);
+                gridContainer.appendChild(tile);
+            }
         }
 
-        // Função para remover todos os itens da casa de uma vez só
         function clearHouse() {
-            const allTiles = document.querySelectorAll('.tile');
-            allTiles.forEach(tile => {
-                tile.innerHTML = '';
+            const allFloors = document.querySelectorAll('.tile.floor');
+            allFloors.forEach(tile => {
+                const item = tile.querySelector('.item');
+                if (item) item.remove();
             });
         }
     </script>
