@@ -74,7 +74,7 @@
         .item-btn img {
             width: 32px;
             height: 32px;
-            image-rendering: pixelated; /* Mantém o estilo retro pixelado sem borrar */
+            image-rendering: pixelated;
         }
 
         .item-btn.selected {
@@ -97,8 +97,8 @@
 
         /* Cada quadrado (tile) do chão */
         .tile {
-            /* Piso de Pedra Clássico do Tibia (Grey Stone Tile) puxado do TibiaWiki */
-            background-image: url('https://static.tibiawiki.com.br/images/8/87/Grey_Stone_Tile.gif');
+            /* Piso de pedra apontando para sua pasta local */
+            background-image: url('images/wooden_tile.gif');
             background-size: cover;
             image-rendering: pixelated;
             display: flex;
@@ -115,11 +115,11 @@
 
         /* Imagem do item colocado dentro do tile */
         .tile img {
-            width: 48px;  /* Um pouco maior que 32px para melhor visibilidade no grid de 64px */
+            width: 48px;
             height: 48px;
             image-rendering: pixelated;
             position: absolute;
-            pointer-events: none; /* Evita que o clique pegue na imagem ao invés do tile */
+            pointer-events: none;
         }
     </style>
 </head>
@@ -133,23 +133,23 @@
         <div class="palette">
             <h3>Itens</h3>
             
-            <button class="item-btn selected" onclick="selectItem('Blood_Herb', 'https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif', this)">
-                <img src="https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif" alt="Blood Herb">
+            <button class="item-btn selected" onclick="selectItem('Blood_Herb', 'images/Blood_Herb.gif', this)">
+                <img src="images/Blood_Herb.gif" alt="Blood Herb">
                 <span>Blood Herb</span>
             </button>
             
-            <button class="item-btn" onclick="selectItem('Cuckoo_Clock', 'https://static.tibiawiki.com.br/images/a/a2/Cuckoo_Clock.gif', this)">
-                <img src="https://static.tibiawiki.com.br/images/a/a2/Cuckoo_Clock.gif" alt="Cuckoo Clock">
+            <button class="item-btn" onclick="selectItem('Baby_Monster', 'images/Baby_Monster.gif', this)">
+                <img src="images/Baby_Monster.gif" alt="Baby Monster">
                 <span>Clock</span>
             </button>
             
-            <button class="item-btn" onclick="selectItem('Demon_Trophy', 'https://static.tibiawiki.com.br/images/b/b3/Demon_Trophy.gif', this)">
-                <img src="https://static.tibiawiki.com.br/images/b/b3/Demon_Trophy.gif" alt="Demon Trophy">
+            <button class="item-btn" onclick="selectItem('Demon_Trophy', 'images/Colourful_Balloons', this)">
+                <img src="images/Colourful_Balloons.gif" alt="Colourful Balloons">
                 <span>Trophy</span>
             </button>
 
-            <button class="item-btn" onclick="selectItem('Box', 'https://static.tibiawiki.com.br/images/d/df/Box.gif', this)">
-                <img src="https://static.tibiawiki.com.br/images/d/df/Box.gif" alt="Box">
+            <button class="item-btn" onclick="selectItem('Jewel_Case', 'images/Jewel_Case.gif', this)">
+                <img src="images/Jewel_Case.gif" alt="Jewel Case">
                 <span>Box</span>
             </button>
             
@@ -166,15 +166,13 @@
     </div>
 
     <script>
-        // Guardamos o nome do item e a URL da imagem selecionada
         let selectedItemName = 'Blood_Herb';
-        let selectedItemImg = 'https://static.tibiawiki.com.br/images/e/e4/Blood_Herb.gif';
+        let selectedItemImg = 'images/blood_herb.gif';
 
         function selectItem(name, imgSrc, buttonElement) {
             selectedItemName = name;
             selectedItemImg = imgSrc;
             
-            // Controle visual de seleção dos botões
             document.querySelectorAll('.item-btn').forEach(btn => btn.classList.remove('selected'));
             buttonElement.classList.add('selected');
         }
@@ -186,11 +184,9 @@
             tile.classList.add('tile');
             
             tile.addEventListener('click', () => {
-                // Remove qualquer imagem que já esteja no tile
                 tile.innerHTML = '';
 
                 if (selectedItemName !== 'Vazio') {
-                    // Cria uma nova tag de imagem para o item
                     const img = document.createElement('img');
                     img.src = selectedItemImg;
                     img.alt = selectedItemName;
